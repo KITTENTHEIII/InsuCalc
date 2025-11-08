@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Insulina</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 28px;
+        }
+
+        .lang-switch {
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            padding: 8px 15px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .lang-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .section-title {
+            color: #764ba2;
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-calculate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-save {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: slideIn 0.5s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-value {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .result-label {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .saved-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: none;
+            animation: slideInRight 0.5s;
+            z-index: 1000;
+        }
+
+        .saved-indicator.show {
+            display: block;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="saved-indicator" id="savedIndicator"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1 id="mainTitle">Calculadora de Insulina</h1>
+            <div class="lang-switch">
+                <button class="lang-btn active" onclick="setLanguage('pt')" id="btnPt">PT</button>
+                <button class="lang-btn" onclick="setLanguage('en')" id="btnEn">EN</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title" id="configTitle">Configurações Pessoais</h2>
+            
+            <div class="input-group">
+                <label for="carbRatio" id="labelCarbRatio">Carboidratos por unidade de insulina (gramas)</label>
+                <input type="number" id="carbRatio" min="1" step="1" value="10">
+            </div>
+
+            <div class="input-group">
+                <label for="correctionFactor" id="labelCorrectionFactor">Fator de Correção (1 unidade reduz X mg/dL)</label>
+                <input type="number" id="correctionFactor" min="1" step="1" value="50">
+            </div>
+
+            <div class="input-group">
+                <label for="targetGlucose" id="labelTargetGlucose">Glicemia Alvo (mg/dL)</label>
+                <input type="number" id="targetGlucose" min="70" max="180" step="1" value="100">
+            </div>
+
+            <button class="btn btn-save" onclick="saveSettings()" id="btnSave">Salvar Configurações</button>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title" id="calcTitle">Calcular Dose</h2>
+            
+            <div class="input-group">
+                <label for="currentGlucose" id="labelCurrentGlucose">Glicemia Atual (mg/dL)</label>
+                <input type="number" id="currentGlucose" min="0" step="1">
+            </div>
+
+            <div class="input-group">
+                <label for="carbs" id="labelCarbs">Carboidratos a Consumir (gramas)</label>
+                <input type="number" id="carbs" min="0" step="1">
+            </div>
+
+            <button class="btn btn-calculate" onclick="calculateInsulin()" id="btnCalculate">Calcular Insulina</button>
+        </div>
+
+        <div class="result" id="result">
+            <div class="result-label" id="resultLabel">Dose Recomendada:</div>
+            <div class="result-value" id="resultValue">0 U</div>
+            <div id="resultDetails"></div>
+        </div>
+    </div>
+
+    <script>
+        // Translations object
+        const translations = {
+            pt: {
+                mainTitle: 'Calculadora de Insulina',
+                configTitle: 'Configurações Pessoais',
+                labelCarbRatio: 'Carboidratos por unidade de insulina (gramas)',
+                labelCorrectionFactor: 'Fator de Correção (1 unidade reduz X mg/dL)',
+                labelTargetGlucose: 'Glicemia Alvo (mg/dL)',
+                btnSave: 'Salvar Configurações',
+                calcTitle: 'Calcular Dose',
+                labelCurrentGlucose: 'Glicemia Atual (mg/dL)',
+                labelCarbs: 'Carboidratos a Consumir (gramas)',
+                btnCalculate: 'Calcular Insulina',
+                resultLabel: 'Dose Recomendada:',
+                savedMessage: '✓ Configurações salvas!',
+                carbDose: 'Dose para carboidratos',
+                correctionDose: 'Dose de correção',
+                fillFields: 'Por favor, preencha a glicemia atual e os carboidratos.'
+            },
+            en: {
+                mainTitle: 'Insulin Calculator',
+                configTitle: 'Personal Settings',
+                labelCarbRatio: 'Insulin:Carb Ratio (1 unit per X grams)',
+                labelCorrectionFactor: 'Correction Factor (1 unit lowers X mg/dL)',
+                labelTargetGlucose: 'Target Glucose (mg/dL)',
+                btnSave: 'Save Settings',
+                calcTitle: 'Calculate Dose',
+                labelCurrentGlucose: 'Current Glucose (mg/dL)',
+                labelCarbs: 'Carbs to Consume (grams)',
+                btnCalculate: 'Calculate Insulin',
+                resultLabel: 'Recommended Dose:',
+                savedMessage: '✓ Settings saved!',
+                carbDose: 'Dose for carbs',
+                correctionDose: 'Correction dose',
+                fillFields: 'Please fill in current glucose and carbs.'
+            }
+        };
+
+        let currentLang = 'pt';
+
+        // Load saved settings on page load
+        window.onload = function() {
+            loadSettings();
+            const savedLang = localStorage.getItem('insulinCalcLang') || 'pt';
+            setLanguage(savedLang);
+        };
+
+        // Set language function
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('insulinCalcLang', lang);
+            
+            // Update button states
+            document.getElementById('btnPt').classList.toggle('active', lang === 'pt');
+            document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+            
+            // Update all text elements
+            const t = translations[lang];
+            document.getElementById('mainTitle').textContent = t.mainTitle;
+            document.getElementById('configTitle').textContent = t.configTitle;
+            document.getElementById('labelCarbRatio').textContent = t.labelCarbRatio;
+            document.getElementById('labelCorrectionFactor').textContent = t.labelCorrectionFactor;
+            document.getElementById('labelTargetGlucose').textContent = t.labelTargetGlucose;
+            document.getElementById('btnSave').textContent = t.btnSave;
+            document.getElementById('calcTitle').textContent = t.calcTitle;
+            document.getElementById('labelCurrentGlucose').textContent = t.labelCurrentGlucose;
+            document.getElementById('labelCarbs').textContent = t.labelCarbs;
+            document.getElementById('btnCalculate').textContent = t.btnCalculate;
+            document.getElementById('resultLabel').textContent = t.resultLabel;
+        }
+
+        // Save settings to localStorage
+        function saveSettings() {
+            const settings = {
+                carbRatio: document.getElementById('carbRatio').value,
+                correctionFactor: document.getElementById('correctionFactor').value,
+                targetGlucose: document.getElementById('targetGlucose').value
+            };
+            
+            localStorage.setItem('insulinCalcSettings', JSON.stringify(settings));
+            
+            // Show saved indicator
+            const indicator = document.getElementById('savedIndicator');
+            indicator.textContent = translations[currentLang].savedMessage;
+            indicator.classList.add('show');
+            
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 3000);
+        }
+
+        // Load settings from localStorage
+        function loadSettings() {
+            const saved = localStorage.getItem('insulinCalcSettings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                document.getElementById('carbRatio').value = settings.carbRatio;
+                document.getElementById('correctionFactor').value = settings.correctionFactor;
+                document.getElementById('targetGlucose').value = settings.targetGlucose;
+            }
+        }
+
+        // Calculate insulin dose
+        function calculateInsulin() {
+            const currentGlucose = parseFloat(document.getElementById('currentGlucose').value);
+            const carbs = parseFloat(document.getElementById('carbs').value);
+            const carbRatio = parseFloat(document.getElementById('carbRatio').value);
+            const correctionFactor = parseFloat(document.getElementById('correctionFactor').value);
+            const targetGlucose = parseFloat(document.getElementById('targetGlucose').value);
+
+            // Validate inputs
+            if (!currentGlucose || !carbs) {
+                alert(translations[currentLang].fillFields);
+                return;
+            }
+
+            // Calculate carb dose
+            const carbDose = carbs / carbRatio;
+
+            // Calculate correction dose
+            const glucoseDifference = currentGlucose - targetGlucose;
+            const correctionDose = glucoseDifference / correctionFactor;
+
+            // Total dose (minimum 0)
+            const totalDose = Math.max(0, carbDose + correctionDose);
+
+            // Display result
+            const resultDiv = document.getElementById('result');
+            const resultValue = document.getElementById('resultValue');
+            const resultDetails = document.getElementById('resultDetails');
+
+            resultValue.textContent = totalDose.toFixed(1) + ' U';
+            
+            const t = translations[currentLang];
+            resultDetails.innerHTML = `
+                <div style="margin-top: 15px; font-size: 14px; opacity: 0.9;">
+                    ${t.carbDose}: ${carbDose.toFixed(1)} U<br>
+                    ${t.correctionDose}: ${correctionDose.toFixed(1)} U
+                </div>
+            `;
+
+            resultDiv.classList.add('show');
+        }
+    </script>
+</body>
+</html>
