@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Insulina</title>
+    <title>Calculadora de Insulina - Diabetes Tipo 1</title>
     <style>
         * {
             margin: 0;
@@ -24,62 +24,56 @@
         .container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 600px;
-            width: 100%;
             padding: 30px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
         h1 {
             color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
             font-size: 28px;
         }
 
-        .lang-switch {
-            display: flex;
-            gap: 10px;
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
         }
 
-        .lang-btn {
-            padding: 8px 15px;
-            border: 2px solid #667eea;
-            background: white;
-            color: #667eea;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .lang-btn.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .lang-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #856404;
         }
 
         .section {
             margin-bottom: 25px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 12px;
         }
 
         .section-title {
-            color: #764ba2;
             font-size: 18px;
+            color: #333;
             margin-bottom: 15px;
-            font-weight: bold;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: #667eea;
+            margin-right: 10px;
+            border-radius: 2px;
         }
 
         .input-group {
@@ -90,19 +84,21 @@
             display: block;
             margin-bottom: 5px;
             color: #555;
+            font-size: 14px;
             font-weight: 500;
         }
 
-        input[type="number"] {
+        input, select {
             width: 100%;
             padding: 12px;
-            border: 2px solid #ddd;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 16px;
-            transition: border 0.3s;
+            transition: border-color 0.3s;
+            background: white;
         }
 
-        input[type="number"]:focus {
+        input:focus, select:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -110,54 +106,44 @@
         .btn {
             width: 100%;
             padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             border: none;
             border-radius: 10px;
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: transform 0.2s, box-shadow 0.2s;
             margin-top: 10px;
         }
 
-        .btn-calculate {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-calculate:hover {
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
-        .btn-save {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-save:hover {
-            background: #218838;
-            transform: translateY(-2px);
+        .btn:active {
+            transform: translateY(0);
         }
 
         .result {
-            margin-top: 20px;
-            padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
             color: white;
-            text-align: center;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 25px;
             display: none;
         }
 
         .result.show {
             display: block;
-            animation: slideIn 0.5s;
+            animation: slideIn 0.3s ease;
         }
 
         @keyframes slideIn {
             from {
                 opacity: 0;
-                transform: translateY(-20px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -165,263 +151,346 @@
             }
         }
 
-        .result-value {
-            font-size: 36px;
-            font-weight: bold;
-            margin: 10px 0;
+        .result-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .result-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
         }
 
         .result-label {
-            font-size: 18px;
+            font-size: 14px;
             opacity: 0.9;
+            margin-bottom: 5px;
         }
 
-        .saved-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #28a745;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        .save-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 12px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #f5f7ff;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        .saved-message {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #155724;
             display: none;
-            animation: slideInRight 0.5s;
-            z-index: 1000;
         }
 
-        .saved-indicator.show {
+        .saved-message.show {
             display: block;
-        }
-
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(100px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 24px;
-            }
-            
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
+            animation: slideIn 0.3s ease;
         }
     </style>
 </head>
 <body>
-    <div class="saved-indicator" id="savedIndicator"></div>
-    
     <div class="container">
-        <div class="header">
-            <h1 id="mainTitle">Calculadora de Insulina</h1>
-            <div class="lang-switch">
-                <button class="lang-btn active" onclick="setLanguage('pt')" id="btnPt">PT</button>
-                <button class="lang-btn" onclick="setLanguage('en')" id="btnEn">EN</button>
+        <h1>💉 Calculadora de Insulina</h1>
+        <p class="subtitle">Diabetes Tipo 1</p>
+
+        <div class="section">
+            <div class="section-title">Configurações Pessoais</div>
+            
+            <div class="input-group">
+                <label for="periodoFSI">Período do Dia</label>
+                <select id="periodoFSI" onchange="atualizarPeriodo()">
+                    <option value="manha">Manhã (6h - 12h)</option>
+                    <option value="tarde">Tarde (12h - 18h)</option>
+                    <option value="noite">Noite (18h - 23h)</option>
+                    <option value="madrugada">Madrugada (23h - 6h)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="fsiManha">FSI - Manhã</label>
+                <input type="number" id="fsiManha" placeholder="Ex: 50" step="1">
+            </div>
+
+            <div class="input-group">
+                <label for="fsiTarde">FSI - Tarde</label>
+                <input type="number" id="fsiTarde" placeholder="Ex: 45" step="1">
+            </div>
+
+            <div class="input-group">
+                <label for="fsiNoite">FSI - Noite</label>
+                <input type="number" id="fsiNoite" placeholder="Ex: 40" step="1">
+            </div>
+
+            <div class="input-group">
+                <label for="fsiMadrugada">FSI - Madrugada</label>
+                <input type="number" id="fsiMadrugada" placeholder="Ex: 55" step="1">
+            </div>
+
+            <div class="input-group">
+                <label for="razaoCarboidrato">Rácio Insulina/Hidratos (1:X)</label>
+                <input type="number" id="razaoCarboidrato" placeholder="Ex: 15" step="1">
+            </div>
+
+            <div class="input-group">
+                <label for="metaGlicemia">Meta de Glicemia (mg/dL)</label>
+                <input type="number" id="metaGlicemia" placeholder="Ex: 100" step="1" value="100">
             </div>
         </div>
 
         <div class="section">
-            <h2 class="section-title" id="configTitle">Configurações Pessoais</h2>
+            <div class="section-title">Dados Atuais</div>
             
             <div class="input-group">
-                <label for="carbRatio" id="labelCarbRatio">Carboidratos por unidade de insulina (gramas)</label>
-                <input type="number" id="carbRatio" min="1" step="1" value="10">
+                <label for="glicemiaAtual">Glicemia Atual (mg/dL)</label>
+                <input type="number" id="glicemiaAtual" placeholder="Ex: 180" step="1">
             </div>
 
             <div class="input-group">
-                <label for="correctionFactor" id="labelCorrectionFactor">Fator de Correção (1 unidade reduz X mg/dL)</label>
-                <input type="number" id="correctionFactor" min="1" step="1" value="50">
+                <label for="carboidratos">Hidratos de Carbono a Consumir (gramas)</label>
+                <input type="number" id="carboidratos" placeholder="Ex: 60" step="1">
             </div>
-
-            <div class="input-group">
-                <label for="targetGlucose" id="labelTargetGlucose">Glicemia Alvo (mg/dL)</label>
-                <input type="number" id="targetGlucose" min="70" max="180" step="1" value="100">
-            </div>
-
-            <button class="btn btn-save" onclick="saveSettings()" id="btnSave">Salvar Configurações</button>
         </div>
 
-        <div class="section">
-            <h2 class="section-title" id="calcTitle">Calcular Dose</h2>
+        <button class="btn" onclick="calcularInsulina()">Calcular Dose de Insulina</button>
+
+        <div class="save-buttons">
+            <button class="btn-secondary" onclick="salvarConfiguracoes()">💾 Salvar Configurações</button>
+            <button class="btn-secondary" onclick="limparConfiguracoes()">🗑️ Limpar Dados</button>
+        </div>
+
+        <div class="saved-message" id="mensagemSalva">
+            ✓ Configurações salvas com sucesso!
+        </div>
+
+        <div class="result" id="resultado">
+            <div class="result-title">📊 Resultado do Cálculo</div>
             
-            <div class="input-group">
-                <label for="currentGlucose" id="labelCurrentGlucose">Glicemia Atual (mg/dL)</label>
-                <input type="number" id="currentGlucose" min="0" step="1">
+            <div class="result-item">
+                <div class="result-label">FSI Utilizado (<span id="periodoUtilizado"></span>)</div>
+                <div class="result-value" id="fsiUtilizado">0 mg/dL</div>
             </div>
 
-            <div class="input-group">
-                <label for="carbs" id="labelCarbs">Carboidratos a Consumir (gramas)</label>
-                <input type="number" id="carbs" min="0" step="1">
+            <div class="result-item">
+                <div class="result-label">Dose de Correção</div>
+                <div class="result-value" id="doseCorrecao">0 U</div>
             </div>
 
-            <button class="btn btn-calculate" onclick="calculateInsulin()" id="btnCalculate">Calcular Insulina</button>
+            <div class="result-item">
+                <div class="result-label">Dose para Hidratos de Carbono</div>
+                <div class="result-value" id="doseCarboidratos">0 U</div>
+            </div>
+
+            <div class="result-item" style="background: rgba(255, 255, 255, 0.3);">
+                <div class="result-label">DOSE TOTAL DE INSULINA</div>
+                <div class="result-value" id="doseTotal">0 U</div>
+            </div>
         </div>
 
-        <div class="result" id="result">
-            <div class="result-label" id="resultLabel">Dose Recomendada:</div>
-            <div class="result-value" id="resultValue">0 U</div>
-            <div id="resultDetails"></div>
-        </div>
+        <p class="info-text">
+            <strong>FSI:</strong> Quanto 1 unidade de insulina diminui sua glicemia (mg/dL)<br>
+            <strong>Razão I:C:</strong> Quantos gramas de carboidrato 1 unidade de insulina cobre
+        </p>
     </div>
 
     <script>
-        // Translations object
-        const translations = {
-            pt: {
-                mainTitle: 'Calculadora de Insulina',
-                configTitle: 'Configurações Pessoais',
-                labelCarbRatio: 'Carboidratos por unidade de insulina (gramas)',
-                labelCorrectionFactor: 'Fator de Correção (1 unidade reduz X mg/dL)',
-                labelTargetGlucose: 'Glicemia Alvo (mg/dL)',
-                btnSave: 'Salvar Configurações',
-                calcTitle: 'Calcular Dose',
-                labelCurrentGlucose: 'Glicemia Atual (mg/dL)',
-                labelCarbs: 'Carboidratos a Consumir (gramas)',
-                btnCalculate: 'Calcular Insulina',
-                resultLabel: 'Dose Recomendada:',
-                savedMessage: '✓ Configurações salvas!',
-                carbDose: 'Dose para carboidratos',
-                correctionDose: 'Dose de correção',
-                fillFields: 'Por favor, preencha a glicemia atual e os carboidratos.'
-            },
-            en: {
-                mainTitle: 'Insulin Calculator',
-                configTitle: 'Personal Settings',
-                labelCarbRatio: 'Insulin:Carb Ratio (1 unit per X grams)',
-                labelCorrectionFactor: 'Correction Factor (1 unit lowers X mg/dL)',
-                labelTargetGlucose: 'Target Glucose (mg/dL)',
-                btnSave: 'Save Settings',
-                calcTitle: 'Calculate Dose',
-                labelCurrentGlucose: 'Current Glucose (mg/dL)',
-                labelCarbs: 'Carbs to Consume (grams)',
-                btnCalculate: 'Calculate Insulin',
-                resultLabel: 'Recommended Dose:',
-                savedMessage: '✓ Settings saved!',
-                carbDose: 'Dose for carbs',
-                correctionDose: 'Correction dose',
-                fillFields: 'Please fill in current glucose and carbs.'
-            }
-        };
-
-        let currentLang = 'pt';
-
-        // Load saved settings on page load
-        window.onload = function() {
-            loadSettings();
-            const savedLang = localStorage.getItem('insulinCalcLang') || 'pt';
-            setLanguage(savedLang);
-        };
-
-        // Set language function
-        function setLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('insulinCalcLang', lang);
-            
-            // Update button states
-            document.getElementById('btnPt').classList.toggle('active', lang === 'pt');
-            document.getElementById('btnEn').classList.toggle('active', lang === 'en');
-            
-            // Update all text elements
-            const t = translations[lang];
-            document.getElementById('mainTitle').textContent = t.mainTitle;
-            document.getElementById('configTitle').textContent = t.configTitle;
-            document.getElementById('labelCarbRatio').textContent = t.labelCarbRatio;
-            document.getElementById('labelCorrectionFactor').textContent = t.labelCorrectionFactor;
-            document.getElementById('labelTargetGlucose').textContent = t.labelTargetGlucose;
-            document.getElementById('btnSave').textContent = t.btnSave;
-            document.getElementById('calcTitle').textContent = t.calcTitle;
-            document.getElementById('labelCurrentGlucose').textContent = t.labelCurrentGlucose;
-            document.getElementById('labelCarbs').textContent = t.labelCarbs;
-            document.getElementById('btnCalculate').textContent = t.btnCalculate;
-            document.getElementById('resultLabel').textContent = t.resultLabel;
-        }
-
-        // Save settings to localStorage
-        function saveSettings() {
-            const settings = {
-                carbRatio: document.getElementById('carbRatio').value,
-                correctionFactor: document.getElementById('correctionFactor').value,
-                targetGlucose: document.getElementById('targetGlucose').value
+        function atualizarPeriodo() {
+            const periodo = document.getElementById('periodoFSI').value;
+            const periodos = {
+                'manha': 'Manhã',
+                'tarde': 'Tarde',
+                'noite': 'Noite',
+                'madrugada': 'Madrugada'
             };
             
-            localStorage.setItem('insulinCalcSettings', JSON.stringify(settings));
+            document.querySelectorAll('.input-group').forEach(group => {
+                const input = group.querySelector('input[id^="fsi"]');
+                if (input) {
+                    group.style.opacity = '0.5';
+                }
+            });
             
-            // Show saved indicator
-            const indicator = document.getElementById('savedIndicator');
-            indicator.textContent = translations[currentLang].savedMessage;
-            indicator.classList.add('show');
-            
+            const fsiAtual = document.getElementById('fsi' + periodo.charAt(0).toUpperCase() + periodo.slice(1));
+            if (fsiAtual) {
+                fsiAtual.parentElement.style.opacity = '1';
+            }
+        }
+
+        function salvarConfiguracoes() {
+            const config = {
+                periodoFSI: document.getElementById('periodoFSI').value,
+                fsiManha: document.getElementById('fsiManha').value,
+                fsiTarde: document.getElementById('fsiTarde').value,
+                fsiNoite: document.getElementById('fsiNoite').value,
+                fsiMadrugada: document.getElementById('fsiMadrugada').value,
+                razaoCarboidrato: document.getElementById('razaoCarboidrato').value,
+                metaGlicemia: document.getElementById('metaGlicemia').value
+            };
+
+            const configData = {};
+            for (const [key, value] of Object.entries(config)) {
+                configData[key] = value;
+            }
+
+            for (const [key, value] of Object.entries(configData)) {
+                document.cookie = `insulina_${key}=${value}; max-age=31536000; path=/`;
+            }
+
+            const mensagem = document.getElementById('mensagemSalva');
+            mensagem.classList.add('show');
             setTimeout(() => {
-                indicator.classList.remove('show');
+                mensagem.classList.remove('show');
             }, 3000);
         }
 
-        // Load settings from localStorage
-        function loadSettings() {
-            const saved = localStorage.getItem('insulinCalcSettings');
-            if (saved) {
-                const settings = JSON.parse(saved);
-                document.getElementById('carbRatio').value = settings.carbRatio;
-                document.getElementById('correctionFactor').value = settings.correctionFactor;
-                document.getElementById('targetGlucose').value = settings.targetGlucose;
+        function carregarConfiguracoes() {
+            const cookies = document.cookie.split(';');
+            const config = {};
+
+            cookies.forEach(cookie => {
+                const [nome, valor] = cookie.trim().split('=');
+                if (nome.startsWith('insulina_')) {
+                    const campo = nome.replace('insulina_', '');
+                    config[campo] = valor;
+                }
+            });
+
+            for (const [campo, valor] of Object.entries(config)) {
+                const elemento = document.getElementById(campo);
+                if (elemento && valor) {
+                    elemento.value = valor;
+                }
             }
         }
 
-        // Calculate insulin dose
-        function calculateInsulin() {
-            const currentGlucose = parseFloat(document.getElementById('currentGlucose').value);
-            const carbs = parseFloat(document.getElementById('carbs').value);
-            const carbRatio = parseFloat(document.getElementById('carbRatio').value);
-            const correctionFactor = parseFloat(document.getElementById('correctionFactor').value);
-            const targetGlucose = parseFloat(document.getElementById('targetGlucose').value);
+        function limparConfiguracoes() {
+            if (confirm('Tem certeza que deseja limpar todas as configurações salvas?')) {
+                const cookies = document.cookie.split(';');
+                cookies.forEach(cookie => {
+                    const nome = cookie.split('=')[0].trim();
+                    if (nome.startsWith('insulina_')) {
+                        document.cookie = `${nome}=; max-age=0; path=/`;
+                    }
+                });
 
-            // Validate inputs
-            if (!currentGlucose || !carbs) {
-                alert(translations[currentLang].fillFields);
+                document.getElementById('periodoFSI').value = 'manha';
+                document.getElementById('fsiManha').value = '';
+                document.getElementById('fsiTarde').value = '';
+                document.getElementById('fsiNoite').value = '';
+                document.getElementById('fsiMadrugada').value = '';
+                document.getElementById('razaoCarboidrato').value = '';
+                document.getElementById('metaGlicemia').value = '100';
+
+                atualizarPeriodo();
+                
+                alert('Configurações limpas com sucesso!');
+            }
+        }
+
+        function calcularInsulina() {
+            const periodo = document.getElementById('periodoFSI').value;
+            const fsiId = 'fsi' + periodo.charAt(0).toUpperCase() + periodo.slice(1);
+            const fsi = parseFloat(document.getElementById(fsiId).value);
+            
+            const razaoCarb = parseFloat(document.getElementById('razaoCarboidrato').value);
+            const meta = parseFloat(document.getElementById('metaGlicemia').value);
+            const glicemiaAtual = parseFloat(document.getElementById('glicemiaAtual').value);
+            const carboidratos = parseFloat(document.getElementById('carboidratos').value);
+
+            if (!fsi || !razaoCarb || !meta || !glicemiaAtual) {
+                alert('Por favor, preencha todos os campos obrigatórios (FSI do período selecionado, Razão I:C, Meta e Glicemia Atual)!');
                 return;
             }
 
-            // Calculate carb dose
-            const carbDose = carbs / carbRatio;
+            if (fsi <= 0 || razaoCarb <= 0 || meta <= 0 || glicemiaAtual <= 0) {
+                alert('Os valores devem ser maiores que zero!');
+                return;
+            }
 
-            // Calculate correction dose
-            const glucoseDifference = currentGlucose - targetGlucose;
-            const correctionDose = glucoseDifference / correctionFactor;
-
-            // Total dose (minimum 0)
-            const totalDose = Math.max(0, carbDose + correctionDose);
-
-            // Display result
-            const resultDiv = document.getElementById('result');
-            const resultValue = document.getElementById('resultValue');
-            const resultDetails = document.getElementById('resultDetails');
-
-            resultValue.textContent = totalDose.toFixed(1) + ' U';
+            const diferencaGlicemia = glicemiaAtual - meta;
+            let doseCorrecao = diferencaGlicemia / fsi;
             
-            const t = translations[currentLang];
-            resultDetails.innerHTML = `
-                <div style="margin-top: 15px; font-size: 14px; opacity: 0.9;">
-                    ${t.carbDose}: ${carbDose.toFixed(1)} U<br>
-                    ${t.correctionDose}: ${correctionDose.toFixed(1)} U
-                </div>
-            `;
+            if (doseCorrecao < 0) {
+                doseCorrecao = 0;
+            }
 
-            resultDiv.classList.add('show');
+            let doseCarboidratos = 0;
+            if (carboidratos && carboidratos > 0) {
+                doseCarboidratos = carboidratos / razaoCarb;
+            }
+
+            const doseTotal = doseCorrecao + doseCarboidratos;
+
+            const periodos = {
+                'manha': 'Manhã',
+                'tarde': 'Tarde',
+                'noite': 'Noite',
+                'madrugada': 'Madrugada'
+            };
+
+            document.getElementById('periodoUtilizado').textContent = periodos[periodo];
+            document.getElementById('fsiUtilizado').textContent = fsi.toFixed(0) + ' mg/dL';
+            document.getElementById('doseCorrecao').textContent = doseCorrecao.toFixed(1) + ' U';
+            document.getElementById('doseCarboidratos').textContent = doseCarboidratos.toFixed(1) + ' U';
+            document.getElementById('doseTotal').textContent = doseTotal.toFixed(1) + ' U';
+
+            document.getElementById('resultado').classList.add('show');
+            document.getElementById('resultado').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
+
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    calcularInsulina();
+                }
+            });
+        });
+
+        carregarConfiguracoes();
+        atualizarPeriodo();
     </script>
 </body>
 </html>
