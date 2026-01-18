@@ -1,0 +1,308 @@
+/* ========================================
+   RESET E ESTILOS GLOBAIS
+   ======================================== */
+
+/* Remove margens e paddings padrão de todos os elementos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilos do corpo da página */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Gradiente roxo de fundo */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    /* Centraliza o conteúdo vertical e horizontalmente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ========================================
+   CONTAINER PRINCIPAL
+   ======================================== */
+
+/* Caixa branca central que contém toda a aplicação */
+.container {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+    /* Sombra para dar profundidade */
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================
+   CABEÇALHO
+   ======================================== */
+
+/* Título principal */
+h1 {
+    color: #667eea;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 28px;
+}
+
+/* Subtítulo */
+.subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+/* ========================================
+   AVISOS E ALERTAS
+   ======================================== */
+
+/* Caixa de aviso amarela (não utilizada atualmente) */
+.warning {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-size: 13px;
+    color: #856404;
+}
+
+/* ========================================
+   SECÇÕES
+   ======================================== */
+
+/* Cada secção da aplicação (Configurações, Dados Atuais) */
+.section {
+    margin-bottom: 25px;
+}
+
+/* Título de cada secção */
+.section-title {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+/* Barra decorativa roxa antes do título */
+.section-title::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: #667eea;
+    margin-right: 10px;
+    border-radius: 2px;
+}
+
+/* ========================================
+   CAMPOS DE ENTRADA (INPUTS)
+   ======================================== */
+
+/* Grupo de input (label + campo) */
+.input-group {
+    margin-bottom: 15px;
+}
+
+/* Etiquetas dos campos */
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Campos de texto e seletores */
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    /* Animação suave da borda ao focar */
+    transition: border-color 0.3s;
+    background: white;
+}
+
+/* Borda roxa quando o campo está ativo */
+input:focus, select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* ========================================
+   BOTÕES
+   ======================================== */
+
+/* Botão principal (Calcular) */
+.btn {
+    width: 100%;
+    padding: 15px;
+    /* Gradiente roxo igual ao fundo */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    /* Animações ao passar o rato e clicar */
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 10px;
+}
+
+/* Efeito ao passar o rato por cima */
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Efeito ao clicar */
+.btn:active {
+    transform: translateY(0);
+}
+
+/* ========================================
+   ÁREA DE RESULTADOS
+   ======================================== */
+
+/* Caixa de resultados (inicialmente escondida) */
+.result {
+    /* Gradiente roxo como fundo */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+    margin-top: 25px;
+    display: none; /* Escondida por padrão */
+}
+
+/* Quando a classe 'show' é adicionada, aparece com animação */
+.result.show {
+    display: block;
+    animation: slideIn 0.3s ease;
+}
+
+/* Animação de entrada suave */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Título da área de resultados */
+.result-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Cada item de resultado individual */
+.result-item {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+/* Remove margem do último item */
+.result-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Etiqueta do resultado (ex: "Dose de Correção") */
+.result-label {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 5px;
+}
+
+/* Valor do resultado (grande e destacado) */
+.result-value {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* ========================================
+   TEXTO INFORMATIVO
+   ======================================== */
+
+/* Explicação dos conceitos no final */
+.info-text {
+    font-size: 12px;
+    color: #999;
+    text-align: center;
+    margin-top: 20px;
+    line-height: 1.5;
+}
+
+/* ========================================
+   BOTÕES SECUNDÁRIOS
+   ======================================== */
+
+/* Container dos botões Salvar e Limpar */
+.save-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Botões secundários (Salvar, Limpar) */
+.btn-secondary {
+    flex: 1; /* Dividem o espaço igualmente */
+    padding: 12px;
+    background: white;
+    color: #667eea;
+    /* Borda roxa */
+    border: 2px solid #667eea;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* Efeito ao passar o rato */
+.btn-secondary:hover {
+    background: #f5f7ff;
+    transform: translateY(-2px);
+}
+
+/* Efeito ao clicar */
+.btn-secondary:active {
+    transform: translateY(0);
+}
+
+/* ========================================
+   MENSAGENS DE CONFIRMAÇÃO
+   ======================================== */
+
+/* Mensagem verde de confirmação */
+.saved-message {
+    background: #d4edda;
+    border-left: 4px solid #28a745;
+    padding: 12px;
+    margin-top: 15px;
+    border-radius: 5px;
+    font-size: 13px;
+    color: #155724;
+    display: none; /* Escondida por padrão */
+}
+
+/* Quando a classe 'show' é adicionada, aparece com animação */
+.saved-message.show {
+    display: block;
+    animation: slideIn 0.3s ease;
+}

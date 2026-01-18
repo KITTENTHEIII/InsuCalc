@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Insulina - Diabetes Tipo 1</title>
+    <!-- Importa o ficheiro de estilos CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Container principal da aplicação -->
+    <div class="container">
+        <!-- Cabeçalho da aplicação -->
+        <h1>💉 Calculadora de Insulina</h1>
+        <p class="subtitle">Diabetes Tipo 1</p>
+
+        <!-- Secção: Configurações Pessoais -->
+        <!-- Aqui o utilizador define os seus valores de FSI e ratios -->
+        <div class="section">
+            <div class="section-title">Configurações Pessoais</div>
+            
+            <!-- Seletor do período do dia -->
+            <!-- Permite escolher entre Manhã, Tarde, Noite ou Madrugada -->
+            <div class="input-group">
+                <label for="periodoFSI">Período do Dia</label>
+                <select id="periodoFSI" onchange="atualizarPeriodo()">
+                    <option value="manha">Manhã (6h - 12h)</option>
+                    <option value="tarde">Tarde (12h - 18h)</option>
+                    <option value="noite">Noite (18h - 23h)</option>
+                    <option value="madrugada">Madrugada (23h - 6h)</option>
+                </select>
+            </div>
+
+            <!-- Campos para FSI (Fator de Sensibilidade à Insulina) -->
+            <!-- FSI = quanto 1 unidade de insulina baixa a glicemia (em mg/dL) -->
+            <div class="input-group">
+                <label for="fsiManha">FSI - Manhã</label>
+                <input type="number" id="fsiManha" placeholder="Ex: 50" step="1">
+            </div>
+
+            <div class="input-group">
+                <label for="fsiTarde">FSI - Tarde</label>
+                <input type="number" id="fsiTarde" placeholder="Ex: 45" step="1">
+            </div>
+
+            <div class="input-group">
+                <label for="fsiNoite">FSI - Noite</label>
+                <input type="number" id="fsiNoite" placeholder="Ex: 40" step="1">
+            </div>
+
+            <div class="input-group">
+                <label for="fsiMadrugada">FSI - Madrugada</label>
+                <input type="number" id="fsiMadrugada" placeholder="Ex: 55" step="1">
+            </div>
+
+            <!-- Rácio Insulina/Carboidratos -->
+            <!-- Define quantos gramas de HC são cobertos por 1 unidade de insulina -->
+            <div class="input-group">
+                <label for="razaoCarboidrato">Rácio Insulina/Hidratos (1:X)</label>
+                <input type="number" id="razaoCarboidrato" placeholder="Ex: 15" step="1">
+            </div>
+
+            <!-- Meta de glicemia desejada -->
+            <div class="input-group">
+                <label for="metaGlicemia">Meta de Glicemia (mg/dL)</label>
+                <input type="number" id="metaGlicemia" placeholder="Ex: 100" step="1" value="100">
+            </div>
+        </div>
+
+        <!-- Secção: Dados Atuais -->
+        <!-- Valores que mudam a cada medição/refeição -->
+        <div class="section">
+            <div class="section-title">Dados Atuais</div>
+            
+            <!-- Glicemia atual medida pelo glicómetro -->
+            <div class="input-group">
+                <label for="glicemiaAtual">Glicemia Atual (mg/dL)</label>
+                <input type="number" id="glicemiaAtual" placeholder="Ex: 180" step="1">
+            </div>
+
+            <!-- Quantidade de hidratos de carbono que vai consumir -->
+            <div class="input-group">
+                <label for="carboidratos">Hidratos de Carbono a Consumir (gramas)</label>
+                <input type="number" id="carboidratos" placeholder="Ex: 60" step="1">
+            </div>
+        </div>
+
+        <!-- Botão principal para calcular a dose -->
+        <button class="btn" onclick="calcularInsulina()">Calcular Dose de Insulina</button>
+
+        <!-- Botões para salvar e limpar as configurações -->
+        <div class="save-buttons">
+            <button class="btn-secondary" onclick="salvarConfiguracoes()">💾 Salvar Configurações</button>
+            <button class="btn-secondary" onclick="limparConfiguracoes()">🗑️ Limpar Dados</button>
+        </div>
+
+        <!-- Mensagem de confirmação quando as configurações são salvas -->
+        <div class="saved-message" id="mensagemSalva">
+            ✓ Configurações salvas com sucesso!
+        </div>
+
+        <!-- Área de resultados do cálculo -->
+        <!-- Inicialmente escondida, aparece após o cálculo -->
+        <div class="result" id="resultado">
+            <div class="result-title">📊 Resultado do Cálculo</div>
+            
+            <!-- FSI utilizado no cálculo (varia conforme o período) -->
+            <div class="result-item">
+                <div class="result-label">FSI Utilizado (<span id="periodoUtilizado"></span>)</div>
+                <div class="result-value" id="fsiUtilizado">0 mg/dL</div>
+            </div>
+
+            <!-- Dose para corrigir a glicemia atual até à meta -->
+            <div class="result-item">
+                <div class="result-label">Dose de Correção</div>
+                <div class="result-value" id="doseCorrecao">0 U</div>
+            </div>
+
+            <!-- Dose para cobrir os hidratos de carbono -->
+            <div class="result-item">
+                <div class="result-label">Dose para Hidratos de Carbono</div>
+                <div class="result-value" id="doseCarboidratos">0 U</div>
+            </div>
+
+            <!-- Dose total = correção + carboidratos -->
+            <div class="result-item" style="background: rgba(255, 255, 255, 0.3);">
+                <div class="result-label">DOSE TOTAL DE INSULINA</div>
+                <div class="result-value" id="doseTotal">0 U</div>
+            </div>
+        </div>
+
+        <!-- Texto informativo sobre os conceitos -->
+        <p class="info-text">
+            <strong>FSI:</strong> Quanto 1 unidade de insulina diminui sua glicemia (mg/dL)<br>
+            <strong>Razão I:C:</strong> Quantos gramas de carboidrato 1 unidade de insulina cobre
+        </p>
+    </div>
+
+    <!-- Importa o ficheiro JavaScript com toda a lógica -->
+    <script src="script.js"></script>
+</body>
+</html>
