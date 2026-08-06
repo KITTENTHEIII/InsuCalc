@@ -1,1 +1,1 @@
-## Calculadora de insulina (diabetes tipo 1)
+## Insulin Calculator (type 1 diabetes)
