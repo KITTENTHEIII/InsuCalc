@@ -3,140 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Insulina - Diabetes Tipo 1</title>
-    <!-- Importa o ficheiro de estilos CSS -->
+    <title>Calculadora de Insulina / Insulin Calculator</title>
+    <!-- Imports the CSS stylesheet -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Container principal da aplicação -->
+    <!-- Main application container -->
     <div class="container">
-        <!-- Cabeçalho da aplicação -->
-        <h1>💉 Calculadora de Insulina</h1>
-        <p class="subtitle">Diabetes Tipo 1</p>
+        <!-- Top bar with theme and language toggle buttons -->
+        <div class="top-bar">
+            <button class="btn-icon" id="languageButton" type="button">🌐 English</button>
+            <button class="btn-icon" id="themeButton" type="button">🌙 Modo Escuro</button>
+        </div>
 
-        <!-- Secção: Configurações Pessoais -->
-        <!-- Aqui o utilizador define os seus valores de FSI e ratios -->
+        <!-- Application header -->
+        <h1 data-i18n="title">💉 Calculadora de Insulina</h1>
+        <p class="subtitle" data-i18n="subtitle">Diabetes Tipo 1</p>
+
+        <!-- Section: Personal Settings -->
+        <!-- Here the user defines their ISF and ratio values -->
         <div class="section">
-            <div class="section-title">Configurações Pessoais</div>
-            
-            <!-- Seletor do período do dia -->
-            <!-- Permite escolher entre Manhã, Tarde, Noite ou Madrugada -->
+            <div class="section-title" data-i18n="sectionPersonal">Configurações Pessoais</div>
+
+            <!-- Time-of-day selector -->
+            <!-- Allows choosing between Morning, Afternoon, Evening or Night -->
             <div class="input-group">
-                <label for="periodoFSI">Período do Dia</label>
-                <select id="periodoFSI" onchange="atualizarPeriodo()">
-                    <option value="manha">Manhã (6h - 12h)</option>
-                    <option value="tarde">Tarde (12h - 18h)</option>
-                    <option value="noite">Noite (18h - 23h)</option>
-                    <option value="madrugada">Madrugada (23h - 6h)</option>
+                <label for="periodSelect" data-i18n="labelPeriod">Período do Dia</label>
+                <select id="periodSelect" onchange="updatePeriod()">
+                    <option value="morning" data-i18n="optionMorning">Manhã (6h - 12h)</option>
+                    <option value="afternoon" data-i18n="optionAfternoon">Tarde (12h - 18h)</option>
+                    <option value="evening" data-i18n="optionEvening">Noite (18h - 23h)</option>
+                    <option value="night" data-i18n="optionNight">Madrugada (23h - 6h)</option>
                 </select>
             </div>
 
-            <!-- Campos para FSI (Fator de Sensibilidade à Insulina) -->
-            <!-- FSI = quanto 1 unidade de insulina baixa a glicemia (em mg/dL) -->
+            <!-- ISF fields (Insulin Sensitivity Factor) -->
+            <!-- ISF = how much 1 unit of insulin lowers blood glucose (in mg/dL) -->
             <div class="input-group">
-                <label for="fsiManha">FSI - Manhã</label>
-                <input type="number" id="fsiManha" placeholder="Ex: 50" step="1">
+                <label for="fsiMorning" data-i18n="labelFsiMorning">FSI - Manhã</label>
+                <input type="number" id="fsiMorning" data-i18n-placeholder="placeholderFsiMorning" placeholder="Ex: 50 ou 47.5" step="0.1">
             </div>
 
             <div class="input-group">
-                <label for="fsiTarde">FSI - Tarde</label>
-                <input type="number" id="fsiTarde" placeholder="Ex: 45" step="1">
+                <label for="fsiAfternoon" data-i18n="labelFsiAfternoon">FSI - Tarde</label>
+                <input type="number" id="fsiAfternoon" data-i18n-placeholder="placeholderFsiAfternoon" placeholder="Ex: 45 ou 42.5" step="0.1">
             </div>
 
             <div class="input-group">
-                <label for="fsiNoite">FSI - Noite</label>
-                <input type="number" id="fsiNoite" placeholder="Ex: 40" step="1">
+                <label for="fsiEvening" data-i18n="labelFsiEvening">FSI - Noite</label>
+                <input type="number" id="fsiEvening" data-i18n-placeholder="placeholderFsiEvening" placeholder="Ex: 40 ou 37.5" step="0.1">
             </div>
 
             <div class="input-group">
-                <label for="fsiMadrugada">FSI - Madrugada</label>
-                <input type="number" id="fsiMadrugada" placeholder="Ex: 55" step="1">
+                <label for="fsiNight" data-i18n="labelFsiNight">FSI - Madrugada</label>
+                <input type="number" id="fsiNight" data-i18n-placeholder="placeholderFsiNight" placeholder="Ex: 55 ou 52.5" step="0.1">
             </div>
 
-            <!-- Rácio Insulina/Carboidratos -->
-            <!-- Define quantos gramas de HC são cobertos por 1 unidade de insulina -->
+            <!-- Insulin/Carb Ratio -->
+            <!-- Defines how many grams of carbs are covered by 1 unit of insulin -->
             <div class="input-group">
-                <label for="razaoCarboidrato">Rácio Insulina/Hidratos (1:X)</label>
-                <input type="number" id="razaoCarboidrato" placeholder="Ex: 15" step="1">
+                <label for="carbRatio" data-i18n="labelCarbRatio">Rácio Insulina/Hidratos (1:X)</label>
+                <input type="number" id="carbRatio" data-i18n-placeholder="placeholderCarbRatio" placeholder="Ex: 15 ou 12.5" step="0.1">
             </div>
 
-            <!-- Meta de glicemia desejada -->
+            <!-- Desired blood glucose target -->
             <div class="input-group">
-                <label for="metaGlicemia">Meta de Glicemia (mg/dL)</label>
-                <input type="number" id="metaGlicemia" placeholder="Ex: 100" step="1" value="100">
+                <label for="glucoseTarget" data-i18n="labelGlucoseTarget">Meta de Glicemia (mg/dL)</label>
+                <input type="number" id="glucoseTarget" data-i18n-placeholder="placeholderGlucoseTarget" placeholder="Ex: 100" step="0.1" value="100">
             </div>
         </div>
 
-        <!-- Secção: Dados Atuais -->
-        <!-- Valores que mudam a cada medição/refeição -->
+        <!-- Section: Current Data -->
+        <!-- Values that change with every measurement/meal -->
         <div class="section">
-            <div class="section-title">Dados Atuais</div>
-            
-            <!-- Glicemia atual medida pelo glicómetro -->
+            <div class="section-title" data-i18n="sectionCurrent">Dados Atuais</div>
+
+            <!-- Current blood glucose measured by the glucometer -->
             <div class="input-group">
-                <label for="glicemiaAtual">Glicemia Atual (mg/dL)</label>
-                <input type="number" id="glicemiaAtual" placeholder="Ex: 180" step="1">
+                <label for="currentGlucose" data-i18n="labelCurrentGlucose">Glicemia Atual (mg/dL)</label>
+                <input type="number" id="currentGlucose" data-i18n-placeholder="placeholderCurrentGlucose" placeholder="Ex: 180" step="0.1">
             </div>
 
-            <!-- Quantidade de hidratos de carbono que vai consumir -->
+            <!-- Amount of carbohydrates about to be consumed -->
             <div class="input-group">
-                <label for="carboidratos">Hidratos de Carbono a Consumir (gramas)</label>
-                <input type="number" id="carboidratos" placeholder="Ex: 60" step="1">
+                <label for="carbs" data-i18n="labelCarbs">Hidratos de Carbono a Consumir (gramas)</label>
+                <input type="number" id="carbs" data-i18n-placeholder="placeholderCarbs" placeholder="Ex: 60" step="0.1">
             </div>
         </div>
 
-        <!-- Botão principal para calcular a dose -->
-        <button class="btn" onclick="calcularInsulina()">Calcular Dose de Insulina</button>
+        <!-- Main button to calculate the dose -->
+        <button class="btn" onclick="calculateInsulin()" data-i18n="btnCalculate">Calcular Dose de Insulina</button>
 
-        <!-- Botões para salvar e limpar as configurações -->
+        <!-- Buttons to save and clear settings -->
         <div class="save-buttons">
-            <button class="btn-secondary" onclick="salvarConfiguracoes()">💾 Salvar Configurações</button>
-            <button class="btn-secondary" onclick="limparConfiguracoes()">🗑️ Limpar Dados</button>
+            <button class="btn-secondary" onclick="saveSettings()" data-i18n="btnSave">💾 Salvar Configurações</button>
+            <button class="btn-secondary" onclick="clearSettings()" data-i18n="btnClear">🗑️ Limpar Dados</button>
         </div>
 
-        <!-- Mensagem de confirmação quando as configurações são salvas -->
-        <div class="saved-message" id="mensagemSalva">
-            ✓ Configurações salvas com sucesso!
+        <!-- Buttons to export/import settings as a .json file -->
+        <!-- Useful as a backup or to move settings to another device -->
+        <div class="data-buttons">
+            <button class="btn-secondary" id="exportButton" type="button" data-i18n="btnExport">⬇️ Exportar</button>
+            <label class="btn-secondary" for="importInput" style="text-align:center; cursor:pointer;" data-i18n="btnImport">⬆️ Importar</label>
+            <input type="file" id="importInput" class="input-file-hidden" accept="application/json,.json">
         </div>
 
-        <!-- Área de resultados do cálculo -->
-        <!-- Inicialmente escondida, aparece após o cálculo -->
-        <div class="result" id="resultado">
-            <div class="result-title">📊 Resultado do Cálculo</div>
-            
-            <!-- FSI utilizado no cálculo (varia conforme o período) -->
+        <!-- Confirmation message shown when settings are saved -->
+        <div class="saved-message" id="savedMessage">
+            <span data-i18n="savedMessage">✓ Configurações salvas com sucesso!</span>
+        </div>
+
+        <!-- Calculation results area -->
+        <!-- Initially hidden, appears after calculating -->
+        <div class="result" id="resultSection">
+            <div class="result-title" data-i18n="resultTitle">📊 Resultado do Cálculo</div>
+
+            <!-- ISF used in the calculation (varies by time of day) -->
             <div class="result-item">
-                <div class="result-label">FSI Utilizado (<span id="periodoUtilizado"></span>)</div>
-                <div class="result-value" id="fsiUtilizado">0 mg/dL</div>
+                <div class="result-label"><span data-i18n="resultLabelFsi">FSI Utilizado</span> (<span id="periodUsed"></span>)</div>
+                <div class="result-value" id="fsiUsed">0 mg/dL</div>
             </div>
 
-            <!-- Dose para corrigir a glicemia atual até à meta -->
+            <!-- Dose to correct current glucose down to the target -->
             <div class="result-item">
-                <div class="result-label">Dose de Correção</div>
-                <div class="result-value" id="doseCorrecao">0 U</div>
+                <div class="result-label" data-i18n="resultLabelCorrection">Dose de Correção</div>
+                <div class="result-value" id="correctionDose">0 U</div>
             </div>
 
-            <!-- Dose para cobrir os hidratos de carbono -->
+            <!-- Dose to cover the carbohydrates -->
             <div class="result-item">
-                <div class="result-label">Dose para Hidratos de Carbono</div>
-                <div class="result-value" id="doseCarboidratos">0 U</div>
+                <div class="result-label" data-i18n="resultLabelCarb">Dose para Hidratos de Carbono</div>
+                <div class="result-value" id="carbDose">0 U</div>
             </div>
 
-            <!-- Dose total = correção + carboidratos -->
+            <!-- Total dose = correction + carbohydrates -->
             <div class="result-item" style="background: rgba(255, 255, 255, 0.3);">
-                <div class="result-label">DOSE TOTAL DE INSULINA</div>
-                <div class="result-value" id="doseTotal">0 U</div>
+                <div class="result-label" data-i18n="resultLabelTotal">DOSE TOTAL DE INSULINA</div>
+                <div class="result-value" id="totalDose">0 U</div>
             </div>
         </div>
 
-        <!-- Texto informativo sobre os conceitos -->
-        <p class="info-text">
+        <!-- Informational text explaining the concepts -->
+        <p class="info-text" id="infoText" data-i18n-html="infoText">
             <strong>FSI:</strong> Quanto 1 unidade de insulina diminui sua glicemia (mg/dL)<br>
             <strong>Razão I:C:</strong> Quantos gramas de carboidrato 1 unidade de insulina cobre
         </p>
     </div>
 
-    <!-- Importa o ficheiro JavaScript com toda a lógica -->
+    <!-- Imports the JavaScript file with all the logic -->
     <script src="script.js"></script>
 </body>
 </html>
